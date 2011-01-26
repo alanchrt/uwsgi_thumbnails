@@ -1,5 +1,3 @@
-# Copy to settings.py and configure
-
 DEBUG = True
 
 # Set this to a very long random string

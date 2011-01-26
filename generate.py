@@ -8,7 +8,7 @@ Generate thumbnails from url on the fly, using uwsgi in nginx.
 
 import hmac
 from PIL import Image
-from settings import *
+from settings import DEBUG, SECRET_KEY, IMAGE_ROOT, THUMB_ROOT
 
 def application(environ, start_response):
     try:
@@ -71,6 +71,7 @@ def application(environ, start_response):
         # Display "File not found" error
         start_response('404 Not Found', [('Content-Type', 'text/plain')])
         if DEBUG:
-            yield "File not found: %s" % error
+            # Output extra 512 bytes to override Chrome friendly 404
+            yield "File not found: %s%s" % (error, " " * 512)
         else:
             yield "File not found"
