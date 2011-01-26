@@ -2,7 +2,17 @@
 uwsgi-thumbnails
 ================
 
-Generate thumbnails from url on the fly, using uwsgi in nginx.
+Efficiently generate thumbnails from url on the fly.
+
+Example:
+http://images.mysite.com/4238_bpM4oOcw_150x200_s.jpg?ed0eee0cfa25309e40cc0d71
+
+Components:
+- Source filename id and hash (4238_bpM4oOcw[.jpg])
+- Dimensions (150x200)
+- Transform (s[cale])
+- Extension (jpg)
+- Signature (ed0eee0cfa25309e40cc0d71)
 
 """
 
@@ -39,7 +49,7 @@ def application(environ, start_response):
             'signature': path[1],
         }
 
-        # Validate transform type
+        # Validate transform type (only scaling for now)
         if not image['transform'] in ('s',):
             raise Exception, "Invalid image transform"
 
