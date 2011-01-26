@@ -1,0 +1,20 @@
+upstream uwsgi_thumbnails {
+    server unix:/tmp/uwsgi-thumbnails.sock;
+}
+
+server {
+    listen   80;
+    server_name  images.mysite.com;
+
+    access_log  /var/log/nginx/images.mysite.com.access.log;
+
+    location / {
+        root /var/www/thumbs;
+        include uwsgi_params;
+
+        if (!-f $request_filename) {
+            break;
+            uwsgi_pass uwsgi_thumbnails;
+        }
+    }
+}
