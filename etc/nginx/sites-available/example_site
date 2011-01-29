@@ -1,5 +1,5 @@
 upstream uwsgi_thumbnails {
-    server unix:/tmp/uwsgi-thumbnails.sock;
+    server unix:/tmp/uwsgi_thumbnails.sock;
 }
 
 server {
