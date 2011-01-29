@@ -1,5 +1,5 @@
 """
-uwsgi-thumbnails
+uwsgi_thumbnails
 ================
 
 Efficiently generate thumbnails from url on the fly.
