@@ -82,6 +82,6 @@ def application(environ, start_response):
         start_response('404 Not Found', [('Content-Type', 'text/plain')])
         if DEBUG:
             # Output extra 512 bytes to override Chrome friendly 404
-            yield "File not found: %s%s" % (error, " " * 512)
+            yield "File not found: %s%s" % (error, ("\n" + " "*32)*16)
         else:
             yield "File not found"
