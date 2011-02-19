@@ -96,6 +96,8 @@ class ThumbnailGenerator(object):
             except IOError, e:
                 if self.dummy:
                     im = Image.open(self.dummy)
+                    filename = 'dummy_%sx%s' % (image['width'],
+                                                image['height'])
                 else:
                     raise IOError, e
 
@@ -109,7 +111,11 @@ class ThumbnailGenerator(object):
             self.post_hook(image, im)
 
             # Redirect to the newly created file
-            start_response('302 Found', [('Location', request_uri)])
+            if filename.startswith('dummy_'):
+                start_response('302 Found', [('Location', '/%s.%s' %
+                                              (filename, image['extension']))])
+            else:
+                start_response('302 Found', [('Location', request_uri)])
 
         except Exception, error:
             # Display "File not found" error
