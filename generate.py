@@ -28,6 +28,14 @@ class ThumbnailGenerator(object):
         self.thumb_root = thumb_root
         self.debug = debug
 
+    def pre_hook(self, image):
+        """This hook is excuted before the thumnbnail is generated."""
+        pass
+
+    def post_hook(self, image, im):
+        """This hook is excuted after the thumnbnail is generated."""
+        pass
+
     def application(self, environ, start_response):
         """Parses the URI and performs the desired transform."""
         try:
@@ -77,6 +85,9 @@ class ThumbnailGenerator(object):
             if not image['signature'] == signature:
                 raise Exception, "Invalid signature '%s'" % signature
 
+            # Run the pre-hook
+            self.pre_hook(image)
+
             # Create the thumbnail
             im = Image.open('%s%s_%s.%s' % (self.image_root, image['id'],
                                             image['hash'], image['extension']))
@@ -84,6 +95,9 @@ class ThumbnailGenerator(object):
             im.thumbnail(size, Image.ANTIALIAS)
             im.save('%s%s.%s' % (self.thumb_root, filename,
                                  image['extension']))
+
+            # Run the post-hook
+            self.post_hook(image, im)
 
             # Redirect to the newly created file
             start_response('302 Found', [('Location', request_uri)])
