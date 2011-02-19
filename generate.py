@@ -21,11 +21,12 @@ from PIL import Image
 
 class ThumbnailGenerator(object):
     def __init__(self, secret_key=None, image_root=None, thumb_root=None,
-                 debug=False):
+                 dummy=None, debug=False):
         # Save attributes
         self.secret_key = secret_key
         self.image_root = image_root
         self.thumb_root = thumb_root
+        self.dummy = dummy
         self.debug = debug
 
     def pre_hook(self, image):
@@ -88,9 +89,17 @@ class ThumbnailGenerator(object):
             # Run the pre-hook
             self.pre_hook(image)
 
-            # Create the thumbnail
-            im = Image.open('%s%s_%s.%s' % (self.image_root, image['id'],
+            # Open the image or display dummy
+            try:
+                im = Image.open('%s%s_%s.%s' % (self.image_root, image['id'],
                                             image['hash'], image['extension']))
+            except IOError, e:
+                if self.dummy:
+                    start_response('302 Found', [('Location', self.dummy)])
+                else:
+                    raise IOError, e
+
+            # Create the thumbnail
             size = (int(image['width']), int(image['height']))
             im.thumbnail(size, Image.ANTIALIAS)
             im.save('%s%s.%s' % (self.thumb_root, filename,
