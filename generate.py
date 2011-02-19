@@ -95,7 +95,7 @@ class ThumbnailGenerator(object):
                                             image['hash'], image['extension']))
             except IOError, e:
                 if self.dummy:
-                    start_response('302 Found', [('Location', self.dummy)])
+                    im = Image.open(self.dummy)
                 else:
                     raise IOError, e
 
