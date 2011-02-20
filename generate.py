@@ -16,7 +16,7 @@ Components:
 
 """
 
-import hmac
+import hmac, os
 from PIL import Image
 
 class ThumbnailGenerator(object):
@@ -90,14 +90,22 @@ class ThumbnailGenerator(object):
             self.pre_hook(image)
 
             # Open the image or display dummy
+            full_thumb_path = lambda filename: ('%s%s.%s' % (self.thumb_root,
+                                                filename, image['extension']))
             try:
                 im = Image.open('%s%s_%s.%s' % (self.image_root, image['id'],
                                             image['hash'], image['extension']))
+                thumbnail_path = full_thumb_path(filename)
             except IOError, e:
                 if self.dummy:
-                    im = Image.open(self.dummy)
                     filename = 'dummy_%sx%s' % (image['width'],
                                                 image['height'])
+                    thumbnail_path = full_thumb_path(filename)
+                    if os.path.exists(thumbnail_path):
+                        start_response('302 Found', [('Location', '/%s.%s' %
+                                              (filename, image['extension']))])
+                    else:
+                        im = Image.open(self.dummy)
                 else:
                     raise IOError, e
 
